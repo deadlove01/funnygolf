@@ -29,6 +29,7 @@ public class IndicatorLine : MonoBehaviour
 	
 	// Update is called once per frame
 	public void DrawLine (Vector3 startPos, Vector3 direction) {
+        //print("start: "+startPos+", direction: "+direction);
         Ray ray = new Ray(startPos, direction);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
@@ -38,8 +39,9 @@ public class IndicatorLine : MonoBehaviour
             lineRenderer.SetPositions(new[]
             {
                 startPos, new Vector3(hit.point.x, startPos.y, hit.point.z), 
-                new Vector3(reflectAngle.x, startPos.y, reflectAngle.z), 
-                reflectAngle
+                new Vector3(reflectAngle.x, startPos.y, reflectAngle.z)
+                //, 
+                //reflectAngle
 
             });
         }

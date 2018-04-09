@@ -35,6 +35,7 @@ public class GolfController : MonoBehaviour
     void Awake()
     {
         rg = GetComponent<Rigidbody>();
+        rg.freezeRotation = true;
     }
 
 	// Use this for initialization
@@ -48,7 +49,7 @@ public class GolfController : MonoBehaviour
 
         var dir = GetScreenDirection();
 	    dir.Normalize();
-        print("dir: "+dir);
+       
 	    var pos = new Vector3(transform.position.x, transform.position.y +0.2f, transform.position.z);
         IndicatorLine.Instance.DrawLine(pos, new Vector3(dir.x, 0, dir.y));
         if (Input.GetMouseButton(0))
@@ -115,7 +116,7 @@ public class GolfController : MonoBehaviour
         {
             speedUp = true;
         }
-        if (rg.velocity.sqrMagnitude <= stopThreshold && rg.angularVelocity.sqrMagnitude <= stopThreshold
+        if (rg.velocity.magnitude <= stopThreshold && rg.angularVelocity.magnitude <= stopThreshold
             && speedUp)
         {
             rg.velocity = Vector3.zero;
@@ -127,10 +128,11 @@ public class GolfController : MonoBehaviour
         }
 
 
-        //if (rg.velocity.sqrMagnitude <= stopThreshold && rg.angularVelocity.sqrMagnitude <= stopThreshold)
+        //if (rg.velocity.sqrMagnitude <= stopThreshold || rg.angularVelocity.sqrMagnitude <= stopThreshold)
         //{
         //    rg.velocity = Vector3.zero;
         //    rg.angularVelocity = Vector3.zero;
+        //    rg.freezeRotation = true;
         //}
 
         //if (rg.velocity.sqrMagnitude <= 0 && rg.angularVelocity.sqrMagnitude <=0)
