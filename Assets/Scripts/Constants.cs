@@ -9,4 +9,5 @@ public class Constants
     public const string GOAL_TAG = "Goal";
     public const string WIN_STR = "You Won!";
     public const string LOSE_STR = "You Lost!";
+    public const string MAP_TAG = "Map";
 }

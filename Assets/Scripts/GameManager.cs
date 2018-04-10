@@ -31,6 +31,9 @@ public class GameManager : MonoBehaviour {
     }
 
     public Camera[] cameras;
+    public GameObject playerPrefab;
+    public GameObject enemyPrefab;
+    public Vector3[] positions;
 
     private int camIndex = 0;
     private bool isShowGuide = false;
@@ -38,6 +41,10 @@ public class GameManager : MonoBehaviour {
     private Camera currentCamera;
     private int gameIndex = 0;
     private bool isGameStarted = false;
+
+    private MapGenerator mapGenerator;
+
+   
    
     void Start()
     {
@@ -48,10 +55,29 @@ public class GameManager : MonoBehaviour {
         camIndex = 0;
         currentCamera = cameras[camIndex++];
 
+       
+        mapGenerator = GetComponent<MapGenerator>();
+        mapGenerator.GenerateMap2();
+        positions = new Vector3[2]
+        {
+            new Vector3(0.5f, 0.62f, 0),
+            new Vector3(-0.5f, 0.62f, 0),
+        };
+        var camFollow = currentCamera.GetComponent<CameraFollow>();
+        camFollow.target = GameObject.FindGameObjectWithTag(Constants.MAP_TAG).transform;
+    }
+
+    public void StartGame()
+    {
         if (gamers == null || gamers.Length == 0)
         {
             Debug.LogError("Gamers array need to declare!");
         }
+        gamers = new GameObject[2];
+        gamers[0] = Instantiate(playerPrefab, positions[0], Quaternion.identity);
+        gamers[0].name = Constants.PLAYER_TAG;
+        gamers[1] = Instantiate(enemyPrefab, positions[1], Quaternion.identity);
+        gamers[1].name = Constants.ENEMY_TAG;
 
         for (int i = 0; i < gamers.Length; i++)
         {
@@ -83,10 +109,11 @@ public class GameManager : MonoBehaviour {
                 {
                     gamers[i].GetComponent<SimpleFSM>().golfBase.isMyTurn = false;
                 }
-            
+
             }
         }
 
+      
         isGameStarted = true;
     }
 

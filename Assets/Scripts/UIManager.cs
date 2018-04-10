@@ -32,6 +32,7 @@ public class UIManager : MonoBehaviour {
     public Text resultText;
     public GameObject loseTitle;
     public GameObject winTitle;
+    public Button btnStartGame;
 
     public void ShowHideCircle(bool value)
     {
@@ -113,4 +114,14 @@ public class UIManager : MonoBehaviour {
         }
     }
 
+
+
+    public void StartGameUI()
+    {
+        if (btnStartGame == null)
+            return;
+
+        btnStartGame.gameObject.SetActive(false);
+        GameManager.Instance.StartGame();
+    }
 }

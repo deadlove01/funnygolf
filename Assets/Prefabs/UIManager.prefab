@@ -60,3 +60,8 @@ MonoBehaviour:
   phase3Color: {r: 1, g: 0, b: 0, a: 1}
   strokeText: {fileID: 0}
   turnText: {fileID: 0}
+  gameoverPanel: {fileID: 0}
+  resultText: {fileID: 0}
+  loseTitle: {fileID: 0}
+  winTitle: {fileID: 0}
+  btnStartGame: {fileID: 0}

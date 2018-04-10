@@ -46,7 +46,7 @@ public class GolfController : MonoBehaviour
 	void Start ()
 	{
 	    GameManager.Instance.ballIsStopped = true;
-	    holeTrans = GameObject.FindGameObjectWithTag("Hole").transform;
+	    holeTrans = GameObject.FindGameObjectWithTag("Goal").transform;
     }
 	
 	// Update is called once per frame
@@ -99,7 +99,7 @@ public class GolfController : MonoBehaviour
 	        var direction = GetScreenDirection();
             direction.Normalize();
 	        rg.freezeRotation = false;
-	        //rg.constraints = RigidbodyConstraints.FreezePositionY;
+            //rg.constraints = RigidbodyConstraints.FreezePositionY;
             var newForce = new Vector3(direction.x, 0, direction.y) * currentSpeed;
             rg.AddForce(newForce, ForceMode.Impulse);
 	        GameManager.Instance.ballIsStopped = false;

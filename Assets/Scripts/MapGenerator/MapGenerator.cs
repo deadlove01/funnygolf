@@ -65,6 +65,7 @@ public class MapGenerator : MonoBehaviour
         lastPosition = Vector3.zero;
         GameObject mapParent = new GameObject("MapParent");
         mapParent.transform.position = lastPosition;
+        mapParent.tag = Constants.MAP_TAG;
         int numOfTiles = Random.Range(minTiles, maxTiles);
         print("number of tiles: " + numOfTiles);
         int counter = numOfTiles;

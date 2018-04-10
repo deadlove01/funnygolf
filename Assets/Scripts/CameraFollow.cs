@@ -10,11 +10,12 @@ public class CameraFollow : MonoBehaviour
     public Vector3 updateOffset;
     public float smoothRate = 2.5f;
     private Vector3 vel = Vector3.zero;
+
     
     [SerializeField]
     private bool lookRotation = false;
 
-    private Transform holeTrans;
+    //private Transform holeTrans;
 
     [HideInInspector]
     public bool isStartFollow = false;
@@ -23,7 +24,7 @@ public class CameraFollow : MonoBehaviour
 	void Start ()
 	{
 	    isStartFollow = false;
-        holeTrans = GameObject.FindGameObjectWithTag("Hole").transform;
+        //holeTrans = GameObject.FindGameObjectWithTag("Hole").transform;
 	}
 	
 	// Update is called once per frame
@@ -31,7 +32,7 @@ public class CameraFollow : MonoBehaviour
 	{
 	    if (target == null || GameManager.Instance.GameOver)
 	        return;
-
+        
 
 	  
         if (lookRotation)
