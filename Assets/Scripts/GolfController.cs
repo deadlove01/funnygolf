@@ -32,6 +32,11 @@ public class GolfController : MonoBehaviour
     private float currentSpeed = 0;
     private bool isRolling = false;
     private bool speedUp = false;
+
+
+    private Transform holeTrans;
+
+    [SerializeField] private Vector3 linePos = Vector3.zero;
     void Awake()
     {
         rg = GetComponent<Rigidbody>();
@@ -42,16 +47,13 @@ public class GolfController : MonoBehaviour
 	void Start ()
 	{
 	    GameManager.Instance.ballIsStopped = true;
-	}
+	    holeTrans = GameObject.FindGameObjectWithTag("Hole").transform;
+    }
 	
 	// Update is called once per frame
 	void Update () {
 
-        var dir = GetScreenDirection();
-	    dir.Normalize();
-       
-	    var pos = new Vector3(transform.position.x, transform.position.y +0.2f, transform.position.z);
-        IndicatorLine.Instance.DrawLine(pos, new Vector3(dir.x, 0, dir.y));
+    
         if (Input.GetMouseButton(0))
 	    {
 	        canSwipe = true;
@@ -62,12 +64,12 @@ public class GolfController : MonoBehaviour
             )
 	    {
 	        setStartPosUI = true;
-         
+	        IndicatorLine.Instance.SetActiveLine(true);
             //UIManager.Instance.DrawArrowDirection(Camera.main.WorldToScreenPoint(transform.position), 
             //    Input.mousePosition);
 
             //print("current hold time: "+currentHoldTime);
-	        if (currentHoldTime < holdTime)
+            if (currentHoldTime < holdTime)
 	        {
 	            currentHoldTime += Time.deltaTime;
             }else if (currentHoldTime > holdTime)
@@ -76,18 +78,27 @@ public class GolfController : MonoBehaviour
 	        currentSpeed = GetSpeed();
 	        var percent = GetPowerPercent(currentSpeed);
             UIManager.Instance.UpdatePowerUI(percent);
+	        var dir = GetScreenDirection();
+	        dir.Normalize();
 
-	     
+	        var pos = new Vector3(transform.position.x + linePos.x, transform.position.y + linePos.y, 
+                transform.position.z + linePos.z);
+	        IndicatorLine.Instance.DrawLine(pos, new Vector3(dir.x, 0, dir.y));
+
         }
 
 	    if (canSwipe && Input.GetMouseButtonUp(0))
 	    {
 	        GameManager.Instance.ShowGuide(false);
-	    
+            IndicatorLine.Instance.SetActiveLine(false);
+            var camLook = GameManager.Instance.GetCurrentCamera().GetComponent<CameraFollow>();
+            camLook.isStartFollow = false;
+
             mousePos = Input.mousePosition;
 	        var direction = GetScreenDirection();
             direction.Normalize();
 	        rg.freezeRotation = false;
+	        rg.constraints = RigidbodyConstraints.FreezePositionY;
             var newForce = new Vector3(direction.x, 0, direction.y) * currentSpeed;
             rg.AddForce(newForce, ForceMode.Impulse);
 	        GameManager.Instance.ballIsStopped = false;
@@ -124,7 +135,14 @@ public class GolfController : MonoBehaviour
             GameManager.Instance.ballIsStopped = true;
             isRolling = false;
             speedUp = false;
+            transform.rotation = Quaternion.LookRotation(holeTrans.position - transform.position);
+            rg.constraints = RigidbodyConstraints.None;
             rg.freezeRotation = true;
+
+            var camLook = GameManager.Instance.GetCurrentCamera().GetComponent<CameraFollow>();
+            camLook.isStartFollow = true;
+            camLook.UpdatePosition();
+
         }
 
 
@@ -164,14 +182,15 @@ public class GolfController : MonoBehaviour
 
     Vector3 GetDirection()
     {
-        var worldPos = Camera.main.ScreenToWorldPoint(new Vector3(touchEnd.x, touchEnd.y, Camera.main.nearClipPlane));
+        var worldPos = GameManager.Instance.GetCurrentCamera()
+            .ScreenToWorldPoint(new Vector3(touchEnd.x, touchEnd.y, GameManager.Instance.GetCurrentCamera().nearClipPlane));
    
         return worldPos;
     }
 
     Vector3 GetScreenDirection()
     {
-        Vector3 screenPoint = Camera.main.WorldToScreenPoint(transform.position);
+        Vector3 screenPoint = GameManager.Instance.GetCurrentCamera().WorldToScreenPoint(transform.position);
         Vector2 direction = (Vector2)(screenPoint - Input.mousePosition);
         
         //var worldPos = Camera.main.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, this.transform.position.z));
@@ -181,7 +200,7 @@ public class GolfController : MonoBehaviour
 
     Vector3 GetWorldDirection()
     {
-        var mousePoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        var mousePoint = GameManager.Instance.GetCurrentCamera().ScreenToWorldPoint(Input.mousePosition);
         return transform.position- mousePoint ;
     }
 

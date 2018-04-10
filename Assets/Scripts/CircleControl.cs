@@ -8,7 +8,7 @@ public class CircleControl : MonoBehaviour
 
     public Image circleImage;
 
-
+    
 	// Use this for initialization
 	void Start () {
 		
@@ -19,7 +19,8 @@ public class CircleControl : MonoBehaviour
 	{
 	    if (circleImage == null)
 	        return;
-	    var newPos = Camera.main.WorldToScreenPoint(transform.position);
+	    //var newPos = Camera.main.WorldToScreenPoint(transform.position);
+	    var newPos = GameManager.Instance.GetCurrentCamera().WorldToScreenPoint(transform.position);
 	    circleImage.transform.position = newPos;
 
 	    circleImage.transform.RotateAround(circleImage.transform.position, Vector3.forward, 20 * Time.deltaTime);
