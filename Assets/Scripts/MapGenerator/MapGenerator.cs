@@ -20,15 +20,25 @@ public class MapGenerator : MonoBehaviour
     public GameObject[] obstaclePrefabs;
     public GameObject[] cornerPrefabs;
 
+    [Range(0f, 1f)]
+    [SerializeField] private float percentCorner = 0.5f;
+    [Range(0f, 1f)]
+    [SerializeField] private float percentMidSpecial = 0.5f;
+
+    [Range(0f, 1f)]
+    [SerializeField]
+    private float percentObstacle = 0.3f;
+
     private Vector3 lastPosition;
-  
+
+    private GameObject lastGameObject = null;
 	// Use this for initialization
 	void Start ()
 	{
         Random.InitState(DateTime.Now.Millisecond);
 	    lastPosition = Vector3.zero;
 	   
-	    GenerateMap();
+	    //GenerateMap();
 
 	}
 	
@@ -38,24 +48,89 @@ public class MapGenerator : MonoBehaviour
 	}
 
 
-    void GenerateMap()
+    public void GenerateMap()
     {
+        if(lastGameObject != null)
+            Destroy(lastGameObject);
+        lastPosition = Vector3.zero;
+        GameObject mapParent = new GameObject("MapParent");
+        mapParent.transform.position = lastPosition;
         int numOfTiles = Random.Range(minTiles, maxTiles);
         print("number of tiles: "+numOfTiles);
         int counter = numOfTiles;
 
         // spawn start tile
         var start = startPrefabs[Random.Range(0, startPrefabs.Length)];
-        SpawnTile(lastPosition, Quaternion.identity, start);
+        var tile = SpawnTile(lastPosition, Quaternion.identity, start);
+        tile.transform.parent = mapParent.transform;
         counter--;
 
         // spawn middle tile
+        float angleY = 0;
+        bool hasCorner = false;
+        bool changeDirection = false;
         while (counter >1)
         {
-            var middle = midNormalPrefabs[Random.Range(0, midNormalPrefabs.Length)];
+            float localAngleY = 0;
+            GameObject prefab = null;
+            var randomPercent = Random.Range(0.0f, 1.0f);
+            if (randomPercent < percentMidSpecial)
+            {
+                prefab = midSpecialPrefabs[Random.Range(0, midSpecialPrefabs.Length)];
+            }
+            else if (!hasCorner)
+            {
+                randomPercent = Random.Range(0.0f, 1.0f);
+                if (randomPercent < percentCorner)
+                {
+                    prefab = cornerPrefabs[Random.Range(0, cornerPrefabs.Length)];
+                    var randNum = Random.Range(0, 10);
+                    angleY = randNum % 2 == 0 ? 180 : 270;
+                    hasCorner = true;
+                }
+                else
+                {
+                    prefab = midNormalPrefabs[Random.Range(0, midNormalPrefabs.Length)];
+                }
+               
+            }
+            else
+            {
+                randomPercent = Random.Range(0.0f, 1.0f);
+                if (randomPercent < percentObstacle)
+                {
+                    prefab = obstaclePrefabs[Random.Range(0, obstaclePrefabs.Length)];
+                }
+                else
+                {
+                    prefab = midNormalPrefabs[Random.Range(0, midNormalPrefabs.Length)];
+                }
+               
+            }
+
             var newPos = lastPosition;
-            newPos.z += tileSize;
-            SpawnTile(newPos, Quaternion.identity, middle);
+            if ((hasCorner && !changeDirection)
+               )
+            {
+                changeDirection = true;
+                newPos.z += tileSize;
+            }else if (!hasCorner)
+            {
+                newPos.z += tileSize;
+            }
+            else
+            {
+                int multiplier = angleY == 180 ? 1 : -1;
+                newPos.x += multiplier * tileSize;
+                if (angleY == 180)
+                    localAngleY = 90;
+                else if (angleY == 270)
+                    localAngleY = -90;
+            }
+           
+          
+            var go = SpawnTile(newPos, Quaternion.Euler(0, localAngleY!= 0? localAngleY: angleY, 0), prefab);
+            go.transform.parent = mapParent.transform;
             counter--;
         }
        
@@ -68,20 +143,51 @@ public class MapGenerator : MonoBehaviour
         {
             var end = endPrefabs[Random.Range(0, endPrefabs.Length)];
             var newPos = lastPosition;
-            newPos.z += tileSize;
-            SpawnTile(newPos, Quaternion.Euler(0, 180, 0), end);
+            if (angleY != 0)
+            {
+                int multiplier = angleY == 180 ? 1 : -1;
+                newPos.x += multiplier * tileSize;
+            }
+            else
+            {
+                newPos.z += tileSize;
+            }
+           
+            var angle = 180;
+            if (angleY == 180)
+            {
+                angle = 270;
+            }else if (angleY == 270 || angleY == -90)
+                angle = 90;
+            var go = SpawnTile(newPos, Quaternion.Euler(0, angle, 0), end);
+            go.transform.parent = mapParent.transform;
             counter--;
         }
-       
+
+        lastGameObject = mapParent;
     }
 
-    void SpawnTile(Vector3 newPos, Quaternion rotation,  GameObject prefab)
+    GameObject SpawnTile(Vector3 newPos, Quaternion rotation,  GameObject prefab)
     {
         //var hole = endPrefabs[Random.Range(0, endPrefabs.Length)];
         var tile = Instantiate(prefab, newPos, rotation);
         tile.transform.position = newPos;
         lastPosition = newPos;
+        return tile;
     }
 
+  
+
+
+    float SpawnCornerTile()
+    {
+        var randNum = Random.Range(0, 10);
+        float angleY = randNum % 2 == 0 ? 180 : 270;
+        var end = cornerPrefabs[Random.Range(0, cornerPrefabs.Length)];
+        var newPos = lastPosition;
+        newPos.z += tileSize;
+        SpawnTile(newPos, Quaternion.Euler(0, angleY, 0), end);
+        return angleY;
+    }
     
 }

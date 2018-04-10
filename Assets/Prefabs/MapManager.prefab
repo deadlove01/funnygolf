@@ -51,7 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43dc6ab3f1b26eb46a4a2ab7dbf61637, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minTiles: 5
+  minTiles: 4
   maxTiles: 10
   tileSize: 3
   startPrefabs:
@@ -84,3 +84,6 @@ MonoBehaviour:
   - {fileID: 1425539298630156, guid: 26b18ab0b3b815344a014f04c68ae623, type: 2}
   - {fileID: 1345968182994592, guid: f92919f78bf8fc64592dd87437c73583, type: 2}
   - {fileID: 1085331632858240, guid: 76ade8e2723b113479400cc119ee91cf, type: 2}
+  percentCorner: 0.5
+  percentMidSpecial: 0.4
+  percentObstacle: 0.205
