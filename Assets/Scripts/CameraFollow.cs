@@ -29,7 +29,7 @@ public class CameraFollow : MonoBehaviour
 	// Update is called once per frame
 	void LateUpdate ()
 	{
-	    if (target == null)
+	    if (target == null || GameManager.Instance.GameOver)
 	        return;
 
 

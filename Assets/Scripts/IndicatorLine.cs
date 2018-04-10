@@ -39,7 +39,7 @@ public class IndicatorLine : MonoBehaviour
 	    LayerMask layerMask = ~ignoreLayer;
         if (Physics.Raycast(ray, out hit, 50f, layerMask))
         {
-            print("hit");
+            //print("hit");
             Vector3 reflectAngle = Vector3.Reflect(ray.direction, hit.normal) * reflectDistance;
             lineRenderer.SetPositions(new[]
             {

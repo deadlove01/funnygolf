@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour {
     public bool ballIsStopped = true;
     public bool enemyWin = false;
     public bool playerWin = false;
-    public GolfBase[] gamers;
+    public GameObject[] gamers;
 
     public Camera GetCurrentCamera()
     {
@@ -36,6 +36,9 @@ public class GameManager : MonoBehaviour {
     private bool isShowGuide = false;
 
     private Camera currentCamera;
+    private int gameIndex = 0;
+    private bool isGameStarted = false;
+   
     void Start()
     {
         if (cameras == null || cameras.Length == 0)
@@ -49,6 +52,42 @@ public class GameManager : MonoBehaviour {
         {
             Debug.LogError("Gamers array need to declare!");
         }
+
+        for (int i = 0; i < gamers.Length; i++)
+        {
+            var go = gamers[i];
+            if (i == gameIndex)
+            {
+                if (go.tag == Constants.PLAYER_TAG)
+                {
+                    var golfScript = go.GetComponent<GolfController>();
+                    golfScript.golfBase.isMyTurn = true;
+                    golfScript.canShoot = true;
+                }
+                else if (go.tag == Constants.ENEMY_TAG)
+                {
+                    var golfScript = go.GetComponent<SimpleFSM>();
+                    golfScript.golfBase.isMyTurn = true;
+                    golfScript.canShoot = true;
+                }
+                print(gamers[gameIndex].tag + " turn!");
+                UIManager.Instance.UpdateTurnText(go.name);
+            }
+            else
+            {
+                if (go.tag == Constants.PLAYER_TAG)
+                {
+                    gamers[i].GetComponent<GolfController>().golfBase.isMyTurn = false;
+                }
+                else if (go.tag == Constants.ENEMY_TAG)
+                {
+                    gamers[i].GetComponent<SimpleFSM>().golfBase.isMyTurn = false;
+                }
+            
+            }
+        }
+
+        isGameStarted = true;
     }
 
     public void SwitchCamera()
@@ -79,4 +118,49 @@ public class GameManager : MonoBehaviour {
         }
     }
 
+    public void SwitchTurn()
+    {
+        if (!isGameStarted)
+            return;
+        var go = gamers[gameIndex];
+        if(go.tag == Constants.PLAYER_TAG)
+            gamers[gameIndex].GetComponent<GolfController>().golfBase.isMyTurn = false;
+        else if (go.tag == Constants.ENEMY_TAG)
+            go.GetComponent<SimpleFSM>().golfBase.isMyTurn = false;
+        if (gameIndex == gamers.Length - 1)
+        {
+            gameIndex = 0;
+        }
+        else
+        {
+            gameIndex++;
+        }
+        print("game index: "+gameIndex);
+        go = gamers[gameIndex];
+        if (go.tag == Constants.PLAYER_TAG)
+        {
+            var golfScript = go.GetComponent<GolfController>();
+            golfScript.golfBase.isMyTurn = true;
+            golfScript.canShoot = true;
+        }
+
+        else if (go.tag == Constants.ENEMY_TAG)
+        {
+            var golfScript = go.GetComponent<SimpleFSM>();
+            golfScript.golfBase.isMyTurn = true;
+            golfScript.canShoot = true;
+            print("enemy set turn: "+golfScript.golfBase.isMyTurn);
+        }
+        print(gamers[gameIndex].tag + " turn!");
+        var camFollow = currentCamera.GetComponent<CameraFollow>();
+        camFollow.target = go.transform;
+        UIManager.Instance.UpdateTurnText(go.name);
+    }
+
+
+    public void EndGame(bool isPlayerWon)
+    {
+        UIManager.Instance.ShowGameOverPanel(true, isPlayerWon);
+    }
+    
 }

@@ -25,6 +25,13 @@ public class UIManager : MonoBehaviour {
     public Color phase2Color;
     public Color phase3Color;
 
+    public Text strokeText;
+    public Text turnText;
+
+    public GameObject gameoverPanel;
+    public Text resultText;
+    public GameObject loseTitle;
+    public GameObject winTitle;
 
     public void ShowHideCircle(bool value)
     {
@@ -78,6 +85,32 @@ public class UIManager : MonoBehaviour {
             powerImage.color = phase3Color;
         }
     }
-    
+
+
+    public void UpdateTextUI(int stroke)
+    {
+        if (strokeText == null)
+            return;
+        strokeText.text = stroke.ToString();
+    }
+
+    public void UpdateTurnText(string name)
+    {
+        if (turnText == null)
+            return;
+        turnText.text = name;
+    }
+
+    public void ShowGameOverPanel(bool value, bool isPlayerWon)
+    {
+        gameoverPanel.SetActive(value);
+        if (value)
+        {
+            winTitle.SetActive(isPlayerWon);
+            loseTitle.SetActive(!isPlayerWon);
+            resultText.gameObject.SetActive(true);
+            resultText.text = isPlayerWon ? Constants.WIN_STR : Constants.LOSE_STR;
+        }
+    }
 
 }

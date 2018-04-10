@@ -8,7 +8,7 @@ public class MuddyTrap : MonoBehaviour
     public float dragValue = 10f;
     void OnTriggerEnter(Collider collider)
     {
-        if (collider.tag == "Player" || collider.tag == "Enemy")
+        if (collider.tag == Constants.PLAYER_TAG || collider.tag == Constants.ENEMY_TAG)
         {
             collider.GetComponent<Rigidbody>().drag = dragValue;
         }
@@ -17,7 +17,7 @@ public class MuddyTrap : MonoBehaviour
 
     void OnTriggerExit(Collider collider)
     {
-        if (collider.tag == "Player" || collider.tag == "Enemy")
+        if (collider.tag == Constants.PLAYER_TAG || collider.tag == Constants.ENEMY_TAG)
         {
             collider.GetComponent<Rigidbody>().drag = 0;
         }

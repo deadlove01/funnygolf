@@ -1,0 +1,12 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Constants
+{
+    public const string PLAYER_TAG = "Player";
+    public const string ENEMY_TAG = "Enemy";
+    public const string GOAL_TAG = "Goal";
+    public const string WIN_STR = "You Won!";
+    public const string LOSE_STR = "You Lost!";
+}
