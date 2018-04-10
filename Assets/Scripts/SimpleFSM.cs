@@ -21,6 +21,9 @@ public class SimpleFSM : FSM {
     public bool canShoot = false;
 
     public float speedLoss = 0.9f;
+
+    public float minSpeed = 2f;
+    public float maxSpeed = 15f;
     private bool speedUp = false;
     private float stopThreshold = 0.7f;
     [SerializeField]private float speed = 10f;
@@ -51,7 +54,8 @@ public class SimpleFSM : FSM {
             }
             else
             {
-                currentState = FSMState.SmartGoal;
+                //currentState = FSMState.SmartGoal;
+                currentState = FSMState.Goal;
             }
         }
         switch (currentState)
@@ -148,6 +152,16 @@ public class SimpleFSM : FSM {
     void AttackPlayer()
     {
         print("AttackPlayer");
+        canShoot = false;
+        var goalPos = playerTrans.position;
+        goalPos = new Vector3(goalPos.x, transform.position.y, goalPos.z);
+        var direction = goalPos - transform.position;
+
+        rg.freezeRotation = false;
+        var newSpeed = Random.Range(minSpeed, maxSpeed);
+        newSpeed = Mathf.Clamp(newSpeed, minSpeed, maxSpeed);
+        var newForce = new Vector3(direction.x, 0, direction.z) * newSpeed;
+        rg.AddForce(newForce, ForceMode.Impulse);
     }
 
     void SmartMoveToGoal()
