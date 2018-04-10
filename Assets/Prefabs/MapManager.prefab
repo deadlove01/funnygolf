@@ -70,6 +70,7 @@ MonoBehaviour:
   - {fileID: 1198500506240418, guid: d902b1fa2f72192489458893c2d947f2, type: 2}
   - {fileID: 1874305652215386, guid: d077b55c938be9544868a1b29efa3fd0, type: 2}
   - {fileID: 1964648170030808, guid: ec078735fad64bb4e86c74a4014ba1be, type: 2}
+  - {fileID: 1495510093070274, guid: 06c01ed7644db924bacfa881479a269f, type: 2}
   obstaclePrefabs:
   - {fileID: 1067698833083440, guid: 6e36b47d14402b94a9b8b6cfac0a152b, type: 2}
   - {fileID: 1358093373746584, guid: a688caa8765cfbe40bc792804cd32441, type: 2}
@@ -84,6 +85,7 @@ MonoBehaviour:
   - {fileID: 1425539298630156, guid: 26b18ab0b3b815344a014f04c68ae623, type: 2}
   - {fileID: 1345968182994592, guid: f92919f78bf8fc64592dd87437c73583, type: 2}
   - {fileID: 1085331632858240, guid: 76ade8e2723b113479400cc119ee91cf, type: 2}
-  percentCorner: 0.5
+  percentCorner: 0.707
   percentMidSpecial: 0.4
   percentObstacle: 0.205
+  cornerTileGap: 3

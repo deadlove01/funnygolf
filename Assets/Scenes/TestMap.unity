@@ -218,11 +218,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 3
       objectReference: {fileID: 0}
-    - target: {fileID: 114576084887261292, guid: 0c04d914b0be9754ab000ba673a943c2,
-        type: 2}
-      propertyPath: percentObstacle
-      value: 0.205
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0c04d914b0be9754ab000ba673a943c2, type: 2}
   m_IsPrefabParent: 0
@@ -613,7 +608,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1316087568}
-        m_MethodName: GenerateMap
+        m_MethodName: GenerateMap2
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
