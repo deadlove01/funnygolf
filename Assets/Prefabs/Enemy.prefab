@@ -151,7 +151,7 @@ MonoBehaviour:
     isMyTurn: 0
   currentState: 0
   attackDistance: 5
-  smart: 1
+  smart: 0
   canShoot: 0
   speedLoss: 0.9
   minSpeed: 2
