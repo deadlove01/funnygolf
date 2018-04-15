@@ -34,6 +34,14 @@ public class UIManager : MonoBehaviour {
     public GameObject winTitle;
     public Button btnStartGame;
 
+    public Text levelText;
+
+
+    void Start()
+    {
+        UpdateLevelText(LevelTracking.Instance.currentLevel);
+    }
+
     public void ShowHideCircle(bool value)
     {
         if (circleImage == null)
@@ -100,6 +108,13 @@ public class UIManager : MonoBehaviour {
         if (turnText == null)
             return;
         turnText.text = name;
+    }
+
+    public void UpdateLevelText(int level)
+    {
+        if (levelText == null)
+            return;
+        levelText.text = level.ToString();
     }
 
     public void ShowGameOverPanel(bool value, bool isPlayerWon)

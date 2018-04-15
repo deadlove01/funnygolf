@@ -129,7 +129,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!114 &114181157805712134
 MonoBehaviour:
@@ -152,7 +152,7 @@ MonoBehaviour:
     isMyTurn: 0
   currentState: 0
   attackDistance: 5
-  smart: 1
+  smart: 0
   canShoot: 0
   speedLoss: 0.9
   minSpeed: 7

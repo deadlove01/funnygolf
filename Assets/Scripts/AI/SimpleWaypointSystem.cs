@@ -66,11 +66,10 @@ public class SimpleWaypointSystem : MonoBehaviour
         }
        
         var direction = waypoint.transform.position - transform.position;
-
-        //check our distance to the current waypoint, Are we near enough?
+        
         if (direction.magnitude < deadZone)
         {
-            if (waypointIndex < waypoints.Length - 1) //switch to the nex waypoint if exists
+            if (waypointIndex < waypoints.Length - 1) 
             {
                 waypointIndex++;
                 waypoint = waypoints[waypointIndex];
@@ -79,29 +78,16 @@ public class SimpleWaypointSystem : MonoBehaviour
                 direction = new Vector3(direction.x, 0, direction.z);
                
                 print("bot direction: " + direction);
-
-                if (!isSmart)
-                {
-                    direction.Normalize();
-                    print("add force");
-                    rg.AddForce(direction * speed, ForceMode.Impulse);
-                }
-                    
-                else
-                {
-                    //rg.velocity = direction.normalized * speed;
-                    direction = waypoint.transform.position - transform.position;
-                    rg.AddForce(direction.normalized * speed, ForceMode.Impulse);
-                    //AddForceSmart(direction.normalized * speed);
-                }
+                
+                rg.AddForce(direction.normalized * speed, ForceMode.Impulse);
+               
             }
-            else //begin from new if we are already on the last waypoint
+            else
             {
                 //waypointIndex = 0;
                 direction = waypoint.transform.position - transform.position;
-                rg.AddForce(direction.normalized * speed, ForceMode.Impulse);
-                //rg.velocity = direction.normalized;
-                //rg.AddForce(direction.normalized);
+                direction = new Vector3(direction.x, 0, direction.z);
+                rg.AddForce(direction.normalized * speed , ForceMode.Impulse);
             }
         }
         else
@@ -117,7 +103,7 @@ public class SimpleWaypointSystem : MonoBehaviour
     private void AddForceSmart(Vector3 force)
     {
         print("AddForceAtPosition");
-        //rg.AddForceAtPosition(force, transform.position);
+        rg.AddForceAtPosition(force, transform.position, ForceMode.Impulse);
     }
    
 

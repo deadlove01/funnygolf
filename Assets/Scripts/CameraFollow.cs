@@ -15,6 +15,7 @@ public class CameraFollow : MonoBehaviour
     public float distance = 10f;
     public float scrollMouseSensitivity = 30f;
     public float distanceSmooth = .1f;
+    
 
     private Vector3 vel;
     private float velDist;
@@ -22,10 +23,10 @@ public class CameraFollow : MonoBehaviour
     private float desiredDistance = 0f;
     private float startDistance = 0f;
     private Vector3 camDesiredPos = Vector3.zero;
+    
     void Start ()
-	{
-       
-	}
+    {
+    }
 
     void Update()
     {
@@ -64,8 +65,9 @@ public class CameraFollow : MonoBehaviour
     void CalculateCameraPosition()
     {
         distance = Mathf.SmoothDamp(distance, desiredDistance, ref velDist, distanceSmooth);
-        
         camDesiredPos = target.transform.position + new Vector3(offset.x, offset.y + distance, offset.z);
+        
+      
     }
 
     void UpdateCameraPosition()

@@ -63,7 +63,8 @@ public class GolfController : MonoBehaviour
 	    
         if (Input.GetMouseButton(0))
 	    {
-	        canSwipe = true;
+            if(GetValidDistance())
+                canSwipe = true;
 	    }
 
 	    if (canSwipe
@@ -71,27 +72,22 @@ public class GolfController : MonoBehaviour
             )
 	    {
 	        setStartPosUI = true;
-	        IndicatorLine.Instance.SetActiveLine(true);
-            //UIManager.Instance.DrawArrowDirection(Camera.main.WorldToScreenPoint(transform.position), 
-            //    Input.mousePosition);
+	     
 
-            //print("current hold time: "+currentHoldTime);
-            //   if (currentHoldTime < holdTime)
-            //{
-            //    currentHoldTime += Time.deltaTime;
-            //   }else if (currentHoldTime > holdTime)
-            //    currentHoldTime = holdTime;
-
-            //currentSpeed = GetSpeed();
 	        var hitPower = GetHitPower();
             var percent = GetPowerPercent(hitPower);
             UIManager.Instance.UpdatePowerUI(percent);
 	        var dir = GetScreenDirection();
 	        dir.Normalize();
 
-	        var pos = new Vector3(transform.position.x + linePos.x, transform.position.y + linePos.y, 
-                transform.position.z + linePos.z);
-	        IndicatorLine.Instance.DrawLine(pos, new Vector3(dir.x, 0, dir.y));
+	        if (LevelTracking.Instance.currentLevel == 1)
+	        {
+	            IndicatorLine.Instance.SetActiveLine(true);
+                var pos = new Vector3(transform.position.x + linePos.x, transform.position.y + linePos.y,
+	                transform.position.z + linePos.z);
+	            IndicatorLine.Instance.DrawLine(pos, new Vector3(dir.x, 0, dir.y));
+            }
+	       
 
 	       
 	        //if (hitPower <= 0)
@@ -117,7 +113,7 @@ public class GolfController : MonoBehaviour
             canShoot = false;
 	        GameManager.Instance.ShowGuide(false);
             IndicatorLine.Instance.SetActiveLine(false);
-            var camLook = GameManager.Instance.GetCurrentCamera().GetComponent<CameraFollow>();
+            //var camLook = GameManager.Instance.GetCurrentCamera().GetComponent<CameraFollow>();
             //camLook.isStartFollow = false;
             
 	        var direction = GetScreenDirection();
@@ -167,7 +163,11 @@ public class GolfController : MonoBehaviour
             {
                 var camLook = GameManager.Instance.GetCurrentCamera().GetComponent<CameraFollow>();
                 //camLook.isStartFollow = true;
-                camLook.UpdateTarget(transform);
+                if (camLook != null)
+                {
+                    camLook.UpdateTarget(transform);
+                }
+               
                 if (speedUp)
                 {
                     if (isStarted)
@@ -213,6 +213,18 @@ public class GolfController : MonoBehaviour
             return power;
         }
         return 0f;
+    }
+
+    bool GetValidDistance()
+    {
+        Vector3 screenPoint = GameManager.Instance.GetCurrentCamera().WorldToScreenPoint(transform.position);
+        var distance = Vector2.Distance(screenPoint, Input.mousePosition);
+        if (distance <= maxDistancePower)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     Vector3 GetScreenDirection()

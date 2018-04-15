@@ -115,6 +115,7 @@ MonoBehaviour:
   cameras:
   - {fileID: 0}
   - {fileID: 0}
+  - {fileID: 0}
   playerPrefab: {fileID: 1277988170215280, guid: 8f5a562202ad694448e257f10bc1caf6,
     type: 2}
   enemyPrefab: {fileID: 1588176635185246, guid: b0bc3f1da0a2ea64ba24521d8a3c4ce2,

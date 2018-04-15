@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
 
@@ -30,7 +31,7 @@ public class GameManager : MonoBehaviour {
         return currentCamera;
     }
 
-    public Camera[] cameras;
+    public GameObject[] cameras;
     public GameObject playerPrefab;
     public GameObject enemyPrefab;
     public Vector3[] positions;
@@ -53,7 +54,7 @@ public class GameManager : MonoBehaviour {
             Debug.LogError("Cameras array need to declare!");
         }
         camIndex = 0;
-        currentCamera = cameras[camIndex++];
+        currentCamera = cameras[camIndex].GetComponent<Camera>();
 
        
         mapGenerator = GetComponent<MapGenerator>();
@@ -63,8 +64,16 @@ public class GameManager : MonoBehaviour {
             new Vector3(0.5f, 0.62f, 0),
             new Vector3(-0.5f, 0.62f, 0),
         };
-        var camFollow = currentCamera.GetComponent<CameraFollow>();
+        //var camFollow = currentCamera.GetComponent<CameraFollow>();
         //camFollow.target = GameObject.FindGameObjectWithTag(Constants.MAP_TAG).transform;
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            SwitchCamera();
+        }
     }
 
     public void StartGame()
@@ -115,15 +124,27 @@ public class GameManager : MonoBehaviour {
 
       
         isGameStarted = true;
+        UIManager.Instance.UpdateLevelText(LevelTracking.Instance.currentLevel);
     }
 
     public void SwitchCamera()
     {
+        if (GameOver)
+            return;
+        print("camera length: "+cameras.Length);
         if (cameras.Length == 1)
             return;
+
+
+        print("switch camera!");
+        cameras[camIndex].SetActive(false);
         if (camIndex == cameras.Length - 1)
             camIndex = 0;
-        currentCamera = cameras[camIndex++];
+        else
+            camIndex++;
+        cameras[camIndex].SetActive(true);
+        currentCamera = cameras[camIndex].GetComponent<Camera>();
+        
     }
 
     public void ShowGuide(bool value)
@@ -180,7 +201,11 @@ public class GameManager : MonoBehaviour {
         }
         print(gamers[gameIndex].tag + " turn!");
         var camFollow = currentCamera.GetComponent<CameraFollow>();
-        camFollow.target = go.transform;
+        if (camFollow != null)
+        {
+            camFollow.target = go.transform;
+        }
+
         UIManager.Instance.UpdateTurnText(go.name);
     }
 
@@ -189,5 +214,11 @@ public class GameManager : MonoBehaviour {
     {
         UIManager.Instance.ShowGameOverPanel(true, isPlayerWon);
     }
-    
+
+    public void NextLevel()
+    {
+        LevelTracking.Instance.currentLevel++;
+        SceneManager.LoadScene(0);
+    }
+
 }

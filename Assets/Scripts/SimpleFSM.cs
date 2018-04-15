@@ -107,7 +107,10 @@ public class SimpleFSM : FSM {
             {
                 var camLook = GameManager.Instance.GetCurrentCamera().GetComponent<CameraFollow>();
                 //camLook.isStartFollow = true;
-                camLook.UpdateTarget(transform);
+                if (camLook != null)
+                {
+                    camLook.UpdateTarget(transform);
+                }
                 if (speedUp)
                 {
                     golfBase.strokes++;
