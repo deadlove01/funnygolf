@@ -39,6 +39,7 @@ GameObject:
   - component: {fileID: 54320969099495412}
   - component: {fileID: 135525099573136380}
   - component: {fileID: 114181157805712134}
+  - component: {fileID: 114539708505650426}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Enemy
@@ -151,12 +152,24 @@ MonoBehaviour:
     isMyTurn: 0
   currentState: 0
   attackDistance: 5
-  smart: 0
+  smart: 1
   canShoot: 0
   speedLoss: 0.9
-  minSpeed: 2
+  minSpeed: 7
   maxSpeed: 15
   speed: 2
+--- !u!114 &114539708505650426
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1588176635185246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23891eb907ed08d409c40a4b3316b489, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  deadZone: 5
 --- !u!135 &135525099573136380
 SphereCollider:
   m_ObjectHideFlags: 1

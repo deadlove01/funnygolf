@@ -10,4 +10,6 @@ public class Constants
     public const string WIN_STR = "You Won!";
     public const string LOSE_STR = "You Lost!";
     public const string MAP_TAG = "Map";
+    public const string WAYPOINT_TAG = "Waypoint";
+    public const string CIRCLE_IMAGE_TAG = "CircleImage";
 }

@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4534694745123036}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Mid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36,7 +36,7 @@ GameObject:
   - component: {fileID: 4323157808623400}
   - component: {fileID: 65372519851843586}
   - component: {fileID: 114673404285212640}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: MidSpecial9
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54,7 +54,7 @@ GameObject:
   - component: {fileID: 33773507552762704}
   - component: {fileID: 23006040658502572}
   - component: {fileID: 64994103732417276}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Mesh1_Straight_Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}

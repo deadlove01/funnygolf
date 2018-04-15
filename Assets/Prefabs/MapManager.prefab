@@ -87,5 +87,9 @@ MonoBehaviour:
   - {fileID: 1085331632858240, guid: 76ade8e2723b113479400cc119ee91cf, type: 2}
   percentCorner: 0.707
   percentMidSpecial: 0.4
-  percentObstacle: 0.205
+  percentObstacle: 0
   cornerTileGap: 3
+  attachWaypoint: 1
+  waypointPrefab: {fileID: 1938654250311158, guid: 8f282bc62e0b6464b9ff608c9cc3843a,
+    type: 2}
+  waypointOffset: {x: 0, y: 2, z: 0}

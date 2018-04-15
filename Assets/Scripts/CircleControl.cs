@@ -8,10 +8,14 @@ public class CircleControl : MonoBehaviour
 
     public Image circleImage;
 
+
+    private GameObject circleGo;
     
 	// Use this for initialization
-	void Start () {
-		
+	void Start ()
+	{
+	    circleGo = GameObject.FindGameObjectWithTag(Constants.CIRCLE_IMAGE_TAG);
+        circleImage = circleGo.GetComponent<Image>();
 	}
 	
 	// Update is called once per frame

@@ -29,6 +29,9 @@ public class SimpleFSM : FSM {
     [SerializeField]private float speed = 10f;
     private System.Random rand = new System.Random(DateTime.Now.Millisecond);
 
+    private SimpleWaypointSystem wpSystem;
+    private Vector3 lastPosition;
+
     protected override void Init()
     {
         base.Init();
@@ -36,28 +39,34 @@ public class SimpleFSM : FSM {
             currentState = FSMState.SmartGoal;
         else
             currentState = FSMState.Goal;
+
+        wpSystem = GetComponent<SimpleWaypointSystem>();
+        wpSystem.UpdateWaypointPositions();
+
+
+        lastPosition = transform.position;
     }
 
     protected override void FSMUpdate()
     {
-        if (!golfBase.isMyTurn || !canShoot)
+        if (!golfBase.isMyTurn || !canShoot || GameManager.Instance.GameOver)
             return;
         base.FSMUpdate();
         
-        if (smart)
-        {
-            var goalDistance = Vector3.Distance(transform.position, goalTrans.position);
-            var playerDistance = Vector3.Distance(transform.position, playerTrans.position);
-            if (goalDistance > playerDistance)
-            {
-                currentState = FSMState.Attack;
-            }
-            else
-            {
-                //currentState = FSMState.SmartGoal;
-                currentState = FSMState.Goal;
-            }
-        }
+        //if (smart)
+        //{
+        //    var goalDistance = Vector3.Distance(transform.position, goalTrans.position);
+        //    var playerDistance = Vector3.Distance(transform.position, playerTrans.position);
+        //    if (goalDistance > playerDistance)
+        //    {
+        //        currentState = FSMState.Attack;
+        //    }
+        //    else
+        //    {
+        //        //currentState = FSMState.SmartGoal;
+        //        currentState = FSMState.Goal;
+        //    }
+        //}
         switch (currentState)
         {
             case FSMState.Goal: MoveToGoal();
@@ -97,11 +106,12 @@ public class SimpleFSM : FSM {
             if (golfBase.isMyTurn)
             {
                 var camLook = GameManager.Instance.GetCurrentCamera().GetComponent<CameraFollow>();
-                camLook.isStartFollow = true;
-                camLook.UpdatePosition();
+                //camLook.isStartFollow = true;
+                camLook.UpdateTarget(transform);
                 if (speedUp)
                 {
                     golfBase.strokes++;
+                    lastPosition = transform.position;
                     if (gameObject.tag == Constants.PLAYER_TAG)
                     {
                         UIManager.Instance.UpdateTextUI(golfBase.strokes);
@@ -136,7 +146,7 @@ public class SimpleFSM : FSM {
         //direction.Normalize();
     }
 
-    IEnumerator IMove()
+    IEnumerator IMove(bool isSmart = false)
     {
         yield return new WaitForSeconds(rand.Next((int)minWaitTime, (int)maxWaitTime+1));
         var goalPos = goalTrans.position;
@@ -144,9 +154,12 @@ public class SimpleFSM : FSM {
         var direction = goalPos - transform.position;
 
         rg.freezeRotation = false;
+        var newSpeed = Random.Range(minSpeed, maxSpeed);
+        newSpeed = Mathf.Clamp(newSpeed, minSpeed, maxSpeed);
+        wpSystem.Play(newSpeed, isSmart);
         //rg.constraints = RigidbodyConstraints.FreezePositionY;
-        var newForce = new Vector3(direction.x, 0, direction.z) * speed;
-        rg.AddForce(newForce, ForceMode.Impulse);
+        //var newForce = new Vector3(direction.x, 0, direction.z) * speed;
+        //rg.AddForce(newForce, ForceMode.Impulse);
     }
 
     void AttackPlayer()
@@ -167,5 +180,15 @@ public class SimpleFSM : FSM {
     void SmartMoveToGoal()
     {
         print("SmartMoveToGoal");
+        canShoot = false;
+        StartCoroutine(IMove(true));
+    }
+
+    public void MoveToLastPosition()
+    {
+        rg.velocity = Vector3.zero;
+        rg.angularVelocity = Vector3.zero;
+        rg.freezeRotation = true;
+        transform.position = lastPosition;
     }
 }

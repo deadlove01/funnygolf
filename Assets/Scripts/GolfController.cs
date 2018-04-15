@@ -14,6 +14,8 @@ public class GolfController : MonoBehaviour
     public float minPower = 1f;
     public float holdTime = 5f;
 
+    public float minDistancePower = 2f;
+    public float maxDistancePower = 90f;
     private float stopThreshold = 0.7f;
 
     private Rigidbody rg;
@@ -36,6 +38,8 @@ public class GolfController : MonoBehaviour
     public bool canShoot = false;
 
     [SerializeField] private Vector3 linePos = Vector3.zero;
+    private Vector3 lastPosition;
+    private bool isStarted = false;
     void Awake()
     {
         rg = GetComponent<Rigidbody>();
@@ -47,14 +51,16 @@ public class GolfController : MonoBehaviour
 	{
 	    GameManager.Instance.ballIsStopped = true;
 	    holeTrans = GameObject.FindGameObjectWithTag("Goal").transform;
-    }
+	    lastPosition = transform.position;
+	}
 	
 	// Update is called once per frame
 	void Update ()
 	{
 	    if (!golfBase.isMyTurn || GameManager.Instance.GameOver || !canShoot)
 	        return;
-    
+
+	    
         if (Input.GetMouseButton(0))
 	    {
 	        canSwipe = true;
@@ -70,14 +76,15 @@ public class GolfController : MonoBehaviour
             //    Input.mousePosition);
 
             //print("current hold time: "+currentHoldTime);
-            if (currentHoldTime < holdTime)
-	        {
-	            currentHoldTime += Time.deltaTime;
-            }else if (currentHoldTime > holdTime)
-	            currentHoldTime = holdTime;
+            //   if (currentHoldTime < holdTime)
+            //{
+            //    currentHoldTime += Time.deltaTime;
+            //   }else if (currentHoldTime > holdTime)
+            //    currentHoldTime = holdTime;
 
-	        currentSpeed = GetSpeed();
-	        var percent = GetPowerPercent(currentSpeed);
+            //currentSpeed = GetSpeed();
+	        var hitPower = GetHitPower();
+            var percent = GetPowerPercent(hitPower);
             UIManager.Instance.UpdatePowerUI(percent);
 	        var dir = GetScreenDirection();
 	        dir.Normalize();
@@ -86,21 +93,40 @@ public class GolfController : MonoBehaviour
                 transform.position.z + linePos.z);
 	        IndicatorLine.Instance.DrawLine(pos, new Vector3(dir.x, 0, dir.y));
 
-        }
+	       
+	        //if (hitPower <= 0)
+	        //{
+	        //    canSwipe = false;
+	        //}
+	    }
 
 	    if (canSwipe && Input.GetMouseButtonUp(0))
 	    {
-	        canShoot = false;
+	        if (!isStarted)
+	        {
+	            isStarted = true;
+
+	        }
+
+            var hitPower = GetHitPower();
+	        if (hitPower < minPower)
+	        {
+	            canSwipe = false;
+	            return;
+	        }
+            canShoot = false;
 	        GameManager.Instance.ShowGuide(false);
             IndicatorLine.Instance.SetActiveLine(false);
             var camLook = GameManager.Instance.GetCurrentCamera().GetComponent<CameraFollow>();
-            camLook.isStartFollow = false;
+            //camLook.isStartFollow = false;
             
 	        var direction = GetScreenDirection();
             direction.Normalize();
 	        rg.freezeRotation = false;
             //rg.constraints = RigidbodyConstraints.FreezePositionY;
-            var newForce = new Vector3(direction.x, 0, direction.y) * currentSpeed;
+	        var playerDir = new Vector3(direction.x, 0, direction.y);
+            print("player direction: "+ playerDir);
+            var newForce = playerDir * hitPower;
             rg.AddForce(newForce, ForceMode.Impulse);
 	        GameManager.Instance.ballIsStopped = false;
             Reset();
@@ -140,11 +166,16 @@ public class GolfController : MonoBehaviour
             if (golfBase.isMyTurn)
             {
                 var camLook = GameManager.Instance.GetCurrentCamera().GetComponent<CameraFollow>();
-                camLook.isStartFollow = true;
-                camLook.UpdatePosition();
+                //camLook.isStartFollow = true;
+                camLook.UpdateTarget(transform);
                 if (speedUp)
                 {
-                    golfBase.strokes++;
+                    if (isStarted)
+                    {
+                        golfBase.strokes++;
+                    }
+                   
+                    lastPosition = transform.position;
                     if (gameObject.tag == Constants.PLAYER_TAG)
                     {
                         UIManager.Instance.UpdateTextUI(golfBase.strokes);
@@ -169,6 +200,20 @@ public class GolfController : MonoBehaviour
     //}
 
 
+    float GetHitPower()
+    {
+        Vector3 screenPoint = GameManager.Instance.GetCurrentCamera().WorldToScreenPoint(transform.position);
+        var distance = Vector2.Distance(screenPoint, Input.mousePosition);
+        if (distance >= minDistancePower)
+        {
+            // max power distance = max power;
+            var power =  distance * maxPower / maxDistancePower;
+            power = Mathf.Clamp(power, 0, maxPower);
+            //print("power: "+power);
+            return power;
+        }
+        return 0f;
+    }
 
     Vector3 GetScreenDirection()
     {
@@ -193,10 +238,20 @@ public class GolfController : MonoBehaviour
         return speed;
     }
 
-    float GetPowerPercent(float speed)
+    float GetPowerPercent(float curPower)
     {
-        var rs = speed / maxPower;
+        var rs = curPower / maxPower;
         return rs > 1 ? 1 : rs;
+    }
+
+
+
+    public void MoveToLastPosition()
+    {
+        rg.velocity = Vector3.zero;
+        rg.angularVelocity = Vector3.zero;
+        rg.freezeRotation = true;
+        transform.position = lastPosition;
     }
 
 

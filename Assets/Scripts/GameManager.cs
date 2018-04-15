@@ -64,7 +64,7 @@ public class GameManager : MonoBehaviour {
             new Vector3(-0.5f, 0.62f, 0),
         };
         var camFollow = currentCamera.GetComponent<CameraFollow>();
-        camFollow.target = GameObject.FindGameObjectWithTag(Constants.MAP_TAG).transform;
+        //camFollow.target = GameObject.FindGameObjectWithTag(Constants.MAP_TAG).transform;
     }
 
     public void StartGame()

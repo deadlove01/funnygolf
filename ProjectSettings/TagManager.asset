@@ -9,6 +9,9 @@ TagManager:
   - Enemy
   - Goal
   - Start
+  - Map
+  - Waypoint
+  - CircleImage
   layers:
   - Default
   - TransparentFX
@@ -19,7 +22,7 @@ TagManager:
   - 
   - 
   - Trap
-  - 
+  - Waypoint
   - 
   - 
   - 

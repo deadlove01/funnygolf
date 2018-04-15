@@ -38,6 +38,10 @@ public class MapGenerator : MonoBehaviour
     [SerializeField]
     private int cornerTileGap = 2;
 
+
+    public bool attachWaypoint = false;
+    public GameObject waypointPrefab;
+    public Vector3 waypointOffset = new Vector3(0,0.5f, 0);
     private Vector3 lastPosition;
 
     private GameObject lastGameObject = null;
@@ -66,6 +70,11 @@ public class MapGenerator : MonoBehaviour
         GameObject mapParent = new GameObject("MapParent");
         mapParent.transform.position = lastPosition;
         mapParent.tag = Constants.MAP_TAG;
+        mapParent.AddComponent<CheckBallFalling>();
+
+        var collider = mapParent.AddComponent<BoxCollider>();
+        collider.isTrigger = true;
+
         int numOfTiles = Random.Range(minTiles, maxTiles);
         print("number of tiles: " + numOfTiles);
         int counter = numOfTiles;
@@ -74,7 +83,12 @@ public class MapGenerator : MonoBehaviour
         var start = startPrefabs[Random.Range(0, startPrefabs.Length)];
         var tile = SpawnTile(lastPosition, Quaternion.identity, start);
         tile.transform.parent = mapParent.transform;
+        Vector3 startPos = tile.transform.position;
         lastTileDirection = TileDirection.Up;
+        if (attachWaypoint)
+        {
+            AddWaypoint(tile.transform);
+        }
         counter--;
 
         bool hasCorner = false;
@@ -132,7 +146,10 @@ public class MapGenerator : MonoBehaviour
         // spawn hole tile
         if (counter <= 1)
         {
-            SpawnTileEnd(mapParent.transform);
+            var go = SpawnTileEnd(mapParent.transform);
+            Vector3 endPos = go.transform.position;
+            var size = Vector3.Distance(startPos, endPos);
+            collider.size = new Vector3(size *3, 10, size*3);
             counter--;
         }
         lastGameObject = mapParent;
@@ -330,6 +347,11 @@ public class MapGenerator : MonoBehaviour
         tile.transform.position = newPos;
         tile.transform.parent = mapParent;
         lastPosition = newPos;
+
+        if (attachWaypoint)
+        {
+            AddWaypoint(tile.transform);
+        }
         return tile;
     }
     GameObject SpawnTileCorner(Transform mapParent)
@@ -414,6 +436,11 @@ public class MapGenerator : MonoBehaviour
         var tile = SpawnTile(newPos, Quaternion.Euler(0, angleY, 0), prefab);
         tile.transform.position = newPos;
         tile.transform.parent = mapParent;
+
+        if (attachWaypoint)
+        {
+            AddWaypoint(tile.transform);
+        }
         lastPosition = newPos;
         return tile;
     }
@@ -448,6 +475,11 @@ public class MapGenerator : MonoBehaviour
         var tile = SpawnTile(newPos, Quaternion.Euler(0, angle, 0), prefab);
         tile.transform.position = newPos;
         tile.transform.parent = mapParent;
+
+        if (attachWaypoint)
+        {
+            AddWaypoint(tile.transform);
+        }
         lastPosition = newPos;
         return tile;
     }
@@ -463,5 +495,20 @@ public class MapGenerator : MonoBehaviour
         SpawnTile(newPos, Quaternion.Euler(0, angleY, 0), end);
         return angleY;
     }
-    
+
+
+
+    void AddWaypoint(Transform waypointParent)
+    {
+        if (waypointPrefab == null)
+        {
+            Debug.LogError("Cannot found waypoint prefab!");
+            return;
+        }
+
+        var prefab = Instantiate(waypointPrefab, waypointParent);
+        prefab.tag = Constants.WAYPOINT_TAG;
+        prefab.transform.localPosition = waypointOffset;
+        prefab.layer = LayerMask.NameToLayer("Waypoint");
+    }
 }
